@@ -7,4 +7,21 @@ public class OverdraftAccount implements IBankAccount {
         this.overdraftLimit = overdraftLimit;
     }
 
+    @Override
+    public void deposit(int cents) {
+        balance += cents;
+    }
+
+    @Override
+    public boolean withdraw(int cents) {
+        if((balance - cents) > (balance + overdraftLimit))
+            return false;
+        balance -= cents;
+        return true;
+    }
+
+    @Override
+    public int getBalance() {
+        return balance;
+    }
 }
