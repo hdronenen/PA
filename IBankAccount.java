@@ -12,7 +12,8 @@ public interface IBankAccount {
      *
      * @post Account = #Account with the account's balance updated to include the cents value.
      */
-    void deposit(int cents);
+    void deposit(int cents); //Primary
+
 
     /**
      * This method will determine the total amount owed by all bills, and confirm that
@@ -28,7 +29,15 @@ public interface IBankAccount {
      * @post payBills = true IFF this.withdraw(total) = true AND this.getBalance = #this.getBalance - total,
      * OW payBills = false AND this.getBalance = #this.getBalance
      */
-    boolean payBills(int[] bills);
+     default boolean payBills(int[] bills) //Secondary
+     {
+         int total = 0;
+         for(int i : bills)
+         {
+             total += i;
+         }
+         return withdraw(total);
+     }
 
     /**
      * Withdraws the numbers of cents into the account, where should the withdrawal result
@@ -44,7 +53,7 @@ public interface IBankAccount {
      * @post withdraw = true IFF getBalance > cents AND getBalance is reduced by cents, OW false AND
      * getBalance = #getBalance
      */
-    boolean withdraw(int cents);
+    boolean withdraw(int cents); //Primary
 
     /**
      * Checks to see if the balance is still positive
@@ -55,11 +64,14 @@ public interface IBankAccount {
      *
      * @post isOverdrawn getBalance < 0 AND self = #self
      */
-    boolean isOverdrawn();
+    default boolean isOverdrawn() //Secondary
+    {
+        return getBalance() < 0;
+    }
 
 
     /**
-     * simple accessor for the balance of the account.
+     * simple accessor for the balance of the account. //Simple Accessor instant primary
      *
      * @return the balance of this account
      *
@@ -68,7 +80,7 @@ public interface IBankAccount {
      * getBalance = the balance associated with this account, not always positive as
      * different account types have different rules AND self = #self
      */
-    int getBalance();
+    int getBalance(); //Primary
 
     /**
      * This method will transfer money from this account to another account.
@@ -84,5 +96,16 @@ public interface IBankAccount {
      * AND other.getBalance = #other.getBalance + cents, OW transferTo = false AND this.getBalance = #this.getBalance
      * AND other.getBalance = #other.getBalance
      */
-    boolean transferTo(IBankAccount other, int cents);
+    default boolean transferTo(IBankAccount other, int cents) //Secondary
+    {
+        if(!withdraw(cents))
+            return false;
+        other.deposit(cents);
+        return true;
+        /*if(getBalance() < cents)
+        return false;
+        withdraw(cents);
+        other.deposit(cents);
+         */
+    }
 }
