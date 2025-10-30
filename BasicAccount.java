@@ -6,4 +6,22 @@ public class BasicAccount implements IBankAccount {
     }
 
 
+    @Override
+    public void deposit(int cents) {
+        balance += cents;
+    }
+
+    @Override
+    public boolean withdraw(int cents) {
+        if (balance < cents)
+            return false;
+        balance -= cents;
+        return true;
+    }
+
+    @Override
+    public int getBalance() {
+        return balance;
+    }
 }
+
